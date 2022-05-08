@@ -424,10 +424,23 @@ function addTextarea(ln, event) {
             ? (element.textContent = element.textContent.toUpperCase())
             : (element.textContent = element.textContent)
         );
-      screen.value += objKeys[event.code][ln].toUpperCase();
+      isCapsLock = true;
+    } else {
+      document
+        .querySelectorAll(".key")
+        .forEach((element) =>
+          letters.includes(element.dataset.code)
+            ? (element.textContent = element.textContent.toLowerCase())
+            : (element.textContent = element.textContent)
+        );
+      isCapsLock = false;
     }
   } else {
-    screen.value += objKeys[event.code][ln];
+    if ((isCapsLock = true)) {
+      screen.value += objKeys[event.code][ln].toUpperCase();
+    } else {
+      screen.value += objKeys[event.code][ln].toLowerCase();
+    }
   }
   screen.focus();
 }
