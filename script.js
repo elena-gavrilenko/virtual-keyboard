@@ -397,6 +397,7 @@ keyboard.addEventListener("click", (event) => {
   document
     .querySelector(`[data-code=${keyCl.dataset.code}]`)
     .classList.add("active");
+
   addTextarea("en", keyCl.dataset);
   // screen.innerHTML += objKeys[keyCl.dataset.code]["en"];
 });
