@@ -178,6 +178,10 @@ let objKeys = {
     ru: "\\",
     en: "\\",
   },
+  NumpadDecimal: {
+    ru: "Del",
+    en: "Del",
+  },
   CapsLock: {
     ru: "CapsLock",
     en: "CapsLock",
@@ -274,6 +278,10 @@ let objKeys = {
     ru: ".",
     en: "/",
   },
+  ArrowUp: {
+    ru: "🠉",
+    en: "🠉",
+  },
   ShiftRight: {
     ru: "Shift",
     en: "Shift",
@@ -281,6 +289,10 @@ let objKeys = {
   ControlLeft: {
     ru: "Ctrl",
     en: "Ctrl",
+  },
+  MetaLeft: {
+    ru: "Win",
+    en: "Win",
   },
   AltLeft: {
     ru: "Alt",
@@ -295,18 +307,12 @@ let objKeys = {
     ru: "AltGraph",
     en: "Alt",
   },
-  ControlRight: {
-    ru: "Ctrl",
-    en: "Ctrl",
-  },
+
   ArrowLeft: {
     ru: "🠈",
     en: "🠈",
   },
-  ArrowUp: {
-    ru: "🠉",
-    en: "🠉",
-  },
+
   ArrowDown: {
     ru: "🠋",
     en: "🠋",
@@ -314,6 +320,10 @@ let objKeys = {
   ArrowRight: {
     ru: "🠊",
     en: "🠊",
+  },
+  ControlRight: {
+    ru: "Ctrl",
+    en: "Ctrl",
   },
 };
 
@@ -328,12 +338,16 @@ title.innerHTML = "Virtual keyboard";
 wrapper.append(title);
 
 const screen = document.createElement("textarea");
+// screen.setAttribute("autofocus", autofocus);
 screen.classList.add("screen");
+screen.focus();
 wrapper.append(screen);
 
 const keyboard = document.createElement("div");
 keyboard.classList.add("keyboard");
 wrapper.append(keyboard);
+
+let isCapsLock = false;
 
 function addKey() {
   let board = [];
@@ -349,16 +363,16 @@ function addKey() {
       for (let j = 0; j < 14; j++) row.innerHTML += board[j];
     }
     if (i == 1) {
-      for (let j = 14; j < 28; j++) row.innerHTML += board[j];
+      for (let j = 14; j < 29; j++) row.innerHTML += board[j];
     }
     if (i == 2) {
-      for (let j = 28; j < 41; j++) row.innerHTML += board[j];
+      for (let j = 29; j < 42; j++) row.innerHTML += board[j];
     }
     if (i == 3) {
-      for (let j = 41; j < 53; j++) row.innerHTML += board[j];
+      for (let j = 42; j < 55; j++) row.innerHTML += board[j];
     }
     if (i == 4) {
-      for (let j = 53; j < board.length; j++) row.innerHTML += board[j];
+      for (let j = 55; j < board.length; j++) row.innerHTML += board[j];
     }
   }
 }
@@ -386,15 +400,33 @@ keyboard.addEventListener("click", (event) => {
   addTextarea("en", keyCl.dataset);
   // screen.innerHTML += objKeys[keyCl.dataset.code]["en"];
 });
+
 function addTextarea(ln, event) {
   if (event.code == "Backspace") {
-    console.log(screen.innerHTML);
-    console.log(typeof screen.innerHTML);
-    screen.innerHTML = screen.innerHTML.substring(
-      0,
-      screen.innerHTML.length - 1
-    );
+    let start = screen.selectionStart;
+    let end = screen.selectionEnd;
+    if (start == end) {
+      screen.value =
+        screen.value.slice(0, start - 1) +
+        screen.value.slice(end, screen.value.length);
+    }
+    screen.value =
+      screen.value.slice(0, start) +
+      screen.value.slice(end, screen.value.length);
+    screen.setSelectionRange(start, end - 1);
+  } else if (event.code == "CapsLock") {
+    if (isCapsLock == false) {
+      document
+        .querySelectorAll(".key")
+        .forEach((element) =>
+          letters.includes(element.dataset.code)
+            ? (element.textContent = element.textContent.toUpperCase())
+            : (element.textContent = element.textContent)
+        );
+      screen.value += objKeys[event.code][ln].toUpperCase();
+    }
   } else {
-    screen.innerHTML += objKeys[event.code][ln];
+    screen.value += objKeys[event.code][ln];
   }
+  screen.focus();
 }
