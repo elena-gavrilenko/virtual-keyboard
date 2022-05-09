@@ -347,6 +347,8 @@ const keyboard = document.createElement("div");
 keyboard.classList.add("keyboard");
 wrapper.append(keyboard);
 
+let ln = "en";
+let flag = false;
 let isCapsLock = false;
 
 function addKey() {
@@ -354,6 +356,7 @@ function addKey() {
   for (let key in objKeys) {
     board.push(`<div class="key" data-code=${key}>${objKeys[key]["en"]}</div>`);
   }
+  ln = "en";
   for (let i = 0; i < 5; i++) {
     let row = document.createElement("div");
     row.classList.add(`row`);
@@ -379,12 +382,13 @@ function addKey() {
 addKey();
 
 document.addEventListener("keydown", (event) => {
+  event.preventDefault();
   console.log(event.code);
   document.querySelectorAll(".key").forEach((element) => {
     element.classList.remove("active");
   });
   document.querySelector(`[data-code=${event.code}]`).classList.add("active");
-  addTextarea("en", event);
+  addTextarea("ln", event);
   // screen.innerHTML += objKeys[event.code]["en"];
 });
 keyboard.addEventListener("click", (event) => {
@@ -398,7 +402,7 @@ keyboard.addEventListener("click", (event) => {
     .querySelector(`[data-code=${keyCl.dataset.code}]`)
     .classList.add("active");
 
-  addTextarea("en", keyCl.dataset);
+  addTextarea(ln, keyCl.dataset);
   // screen.innerHTML += objKeys[keyCl.dataset.code]["en"];
 });
 
@@ -415,6 +419,41 @@ function addTextarea(ln, event) {
       screen.value.slice(0, start) +
       screen.value.slice(end, screen.value.length);
     screen.setSelectionRange(start, end - 1);
+  } else if (event.code == "ControlLeft") {
+    flag = true;
+  } else if (event.code == "AltLeft" && flag) {
+    ln = "ru";
+    flag = false;
+    document
+      .querySelectorAll(".key")
+      .forEach((element) =>
+        console.log((element.textContent = objKeys[element.dataset.code][ln]))
+      );
+    console.log(`ln в конце ${ln}`);
+  } else if (event.code == "Enter") {
+    let start = screen.selectionStart;
+    let end = screen.selectionEnd;
+    let endStr = screen.value.length;
+    console.log(start);
+    if (end == endStr) {
+      screen.value =
+        screen.value.slice(0, start) + "\n" + screen.value.slice(start);
+    } else {
+      screen.value =
+        screen.value.slice(0, start) + "\n" + screen.value.slice(end);
+    }
+  } else if (event.code == "NumpadDecimal") {
+    let start = screen.selectionStart;
+    let end = screen.selectionEnd;
+    if (start == end) {
+      screen.value =
+        screen.value.slice(0, start) +
+        screen.value.slice(end + 1, screen.value.length);
+    }
+    screen.value =
+      screen.value.slice(0, start) +
+      screen.value.slice(end, screen.value.length);
+    screen.setSelectionRange(start, end);
   } else if (event.code == "CapsLock") {
     if (isCapsLock == false) {
       document
@@ -436,11 +475,14 @@ function addTextarea(ln, event) {
       isCapsLock = false;
     }
   } else {
-    if ((isCapsLock = true)) {
-      screen.value += objKeys[event.code][ln].toUpperCase();
-    } else {
-      screen.value += objKeys[event.code][ln].toLowerCase();
-    }
+    // if (isCapsLock == true) {
+    //   screen.value += objKeys[event.code][ln].toUpperCase();
+    // } else {
+    //   screen.value += objKeys[event.code][ln].toLowerCase();
+    // }
+    screen.value += document.querySelector(
+      `[data-code=${event.code}]`
+    ).textContent;
   }
   screen.focus();
 }
