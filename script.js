@@ -362,7 +362,9 @@ function getLocalStorage() {
 }
 
 getLocalStorage();
-
+if (ln == undefined) {
+  ln = "en";
+}
 let isCapsLock = false;
 
 function addKey() {
