@@ -61,6 +61,7 @@ let functional = [
   "Space",
   "AltRight",
   "ArrowLeft",
+  "ControlRight",
   "ArrowUp",
   "ArrowDown",
   "ArrowRight",
@@ -304,7 +305,7 @@ let objKeys = {
   },
 
   AltRight: {
-    ru: "AltGraph",
+    ru: "Alt",
     en: "Alt",
   },
 
@@ -338,25 +339,37 @@ title.innerHTML = "Virtual keyboard";
 wrapper.append(title);
 
 const screen = document.createElement("textarea");
-// screen.setAttribute("autofocus", autofocus);
 screen.classList.add("screen");
-screen.focus();
 wrapper.append(screen);
+screen.focus();
 
 const keyboard = document.createElement("div");
 keyboard.classList.add("keyboard");
 wrapper.append(keyboard);
 
-let ln = "en";
-let flag = false;
+const subtitle = document.createElement("h2");
+subtitle.classList.add("subtitle");
+subtitle.innerHTML =
+  "Клавиатура создана в операционной системе Windows Для переключения языка комбинация: левыe ctrl + alt";
+wrapper.append(subtitle);
+
+const langKey = "ln";
+
+function getLocalStorage() {
+  if (localStorage.getItem(langKey)) {
+    ln = localStorage.getItem(langKey);
+  }
+}
+
+getLocalStorage();
+
 let isCapsLock = false;
 
 function addKey() {
   let board = [];
   for (let key in objKeys) {
-    board.push(`<div class="key" data-code=${key}>${objKeys[key]["en"]}</div>`);
+    board.push(`<div class="key" data-code=${key}>${objKeys[key][ln]}</div>`);
   }
-  ln = "en";
   for (let i = 0; i < 5; i++) {
     let row = document.createElement("div");
     row.classList.add(`row`);
@@ -380,19 +393,18 @@ function addKey() {
   }
 }
 addKey();
-
 document.addEventListener("keydown", (event) => {
   event.preventDefault();
-  console.log(event.code);
+  if (!objKeys.hasOwnProperty(event.code)) return;
+  addTextarea(event);
   document.querySelectorAll(".key").forEach((element) => {
     element.classList.remove("active");
   });
   document.querySelector(`[data-code=${event.code}]`).classList.add("active");
-  addTextarea("ln", event);
-  // screen.innerHTML += objKeys[event.code]["en"];
 });
 keyboard.addEventListener("click", (event) => {
   let keyCl = event.target.closest(".key");
+  console.log(keyCl);
   if (!keyCl) return;
   document.querySelectorAll(".key").forEach((element) => {
     element.classList.remove("active");
@@ -401,12 +413,14 @@ keyboard.addEventListener("click", (event) => {
   document
     .querySelector(`[data-code=${keyCl.dataset.code}]`)
     .classList.add("active");
-
-  addTextarea(ln, keyCl.dataset);
-  // screen.innerHTML += objKeys[keyCl.dataset.code]["en"];
+  addTextarea(keyCl.dataset);
 });
 
-function addTextarea(ln, event) {
+function setLocalStorage() {
+  localStorage.setItem(langKey, ln);
+}
+
+function addTextarea(event) {
   if (event.code == "Backspace") {
     let start = screen.selectionStart;
     let end = screen.selectionEnd;
@@ -419,17 +433,26 @@ function addTextarea(ln, event) {
       screen.value.slice(0, start) +
       screen.value.slice(end, screen.value.length);
     screen.setSelectionRange(start, end - 1);
-  } else if (event.code == "ControlLeft") {
-    flag = true;
-  } else if (event.code == "AltLeft" && flag) {
-    ln = "ru";
-    flag = false;
+  } else if (
+    event.code == "ControlLeft" ||
+    event.code == "ControlRight" ||
+    event.code == "AltRight"
+  ) {
+    screen.value = screen.value.slice(0, end);
+  } else if (event.altKey && event.ctrlKey) {
+    let start = screen.selectionStart;
+    let end = screen.selectionEnd;
+    if (ln == "en") {
+      ln = "ru";
+    } else {
+      ln = "en";
+    }
     document
       .querySelectorAll(".key")
-      .forEach((element) =>
-        console.log((element.textContent = objKeys[element.dataset.code][ln]))
+      .forEach(
+        (element) => (element.textContent = objKeys[element.dataset.code][ln])
       );
-    console.log(`ln в конце ${ln}`);
+    setLocalStorage();
   } else if (event.code == "Enter") {
     let start = screen.selectionStart;
     let end = screen.selectionEnd;
@@ -454,6 +477,14 @@ function addTextarea(ln, event) {
       screen.value.slice(0, start) +
       screen.value.slice(end, screen.value.length);
     screen.setSelectionRange(start, end);
+  } else if (event.code == "Tab") {
+    let start = screen.selectionStart;
+    let end = screen.selectionEnd;
+    screen.value =
+      screen.value.slice(0, start) +
+      "  " +
+      screen.value.slice(end, screen.value.length);
+    screen.setSelectionRange(end + 3);
   } else if (event.code == "CapsLock") {
     if (isCapsLock == false) {
       document
@@ -475,11 +506,6 @@ function addTextarea(ln, event) {
       isCapsLock = false;
     }
   } else {
-    // if (isCapsLock == true) {
-    //   screen.value += objKeys[event.code][ln].toUpperCase();
-    // } else {
-    //   screen.value += objKeys[event.code][ln].toLowerCase();
-    // }
     screen.value += document.querySelector(
       `[data-code=${event.code}]`
     ).textContent;
