@@ -49,21 +49,6 @@
   display: flex;
   flex-direction: row;
 }
-/* 
-.key {
-  width: 50px;
-  height: 50px;
-  padding: 3px;
-  margin: 4px;
-  text-align: center;
-  font-size: 23px;
-  padding-top: 10px;
-  outline: none;
-  border: 2px solid #870ba0;
-  border-radius: 5px;
-  box-shadow: 0 0 0 60px rgba(0,0,0,0) inset, .1em .1em .2em #620574;
-  background: linear-gradient(45deg, #8b15fa, #a13efc,#b569fc,#c891fc, #b569fc, #a13efc, #8b15fa);
-} */
 
 .key {
   width: 50px;
@@ -80,48 +65,24 @@
   border-radius: 5px;
   box-shadow: 0 0 0 60px rgba(0,0,0,0) inset, .1em .1em .2em #620574;
   background: linear-gradient(45deg, #8b15fa, #a13efc,#b569fc,#c891fc, #b569fc, #a13efc, #8b15fa);
-  transition: 0.5s all ease;
-}
-.key::before{
-  background: #eaf1f1;
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-  z-index: -1;
-  transition: all 1s ease;
-}
+ }
 
-.key::before{
-  width: 150%;
-  height: 0%;
-  transform: translate(-50%,-50%) rotate(-45deg);
-} 
- .active::before{
-  height: 380%;
-  z-index: -1;
-} 
- .active::before {
-   height: 380%;
+@keyframes back {
+  from {
+  background: #eaf1f1;
+ border-radius:50%;
 }
-/* .active {
-  border-radius:50%;
-  background:aliceblue;
-} */
+ 
+}
+ 
+.active {
+  animation-duration: 0.7s;
+  animation-name: back;
+}
    .key:hover{ 
   opacity: 0.5;
   cursor: pointer;
 }
-/* .active {
-  background:#a1a0a0;
-  animation: background 1s ease;
-}
-  @keyframes background {
-   50% {background-image: linear-gradient(-45deg, #f6d9ec, #764ba2, #edcddc, #8E37D7);
-    box-shadow: 0 4px 15px 0 rgba(116, 79, 168, 0.75);
-   }
-} */
 
 div[data-code=Backspace],
 div[data-code=Enter],
@@ -133,7 +94,6 @@ div[data-code=ShiftRight] {
     black -1px 1px 0,
     black -1px -1px 0,
     black 1px -1px 0;
-  /* text-shadow: 0 0 6px black; */
   color:white;
   outline: none;
   border: 2px solid #292828;
@@ -168,4 +128,10 @@ div[data-code=ArrowUp] {
 
 div[data-code=Space] {
   width: 396px;
+}
+.subtitle {
+  width: 610px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 5px;
 }
