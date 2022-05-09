@@ -358,13 +358,11 @@ const langKey = "ln";
 function getLocalStorage() {
   if (localStorage.getItem(langKey)) {
     ln = localStorage.getItem(langKey);
-  }
+  } else ln = "en";
 }
 
 getLocalStorage();
-if (ln == undefined) {
-  ln = "en";
-}
+
 let isCapsLock = false;
 
 function addKey() {
