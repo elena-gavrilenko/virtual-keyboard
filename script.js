@@ -311,6 +311,7 @@ let objKeys = {
   AltLeft: {
     ru: "Alt",
     en: "Alt",
+    pm: "",
   },
   Space: {
     ru: " ",
@@ -372,7 +373,7 @@ function getLocalStorage() {
   if (localStorage.getItem(langKey)) {
     ln = localStorage.getItem(langKey);
   } else {
-    ln = "en"
+    ln = "en";
   }
 }
 
@@ -416,7 +417,9 @@ document.addEventListener("keydown", (event) => {
   document.querySelectorAll(".key").forEach((element) => {
     element.classList.remove("active");
   });
-  document.querySelector(`[data-code=${event.code}]`).classList.add("active");
+  requestAnimationFrame(() =>
+    document.querySelector(`[data-code=${event.code}]`).classList.add("active")
+  );
 });
 keyboard.addEventListener("click", (event) => {
   let keyCl = event.target.closest(".key");
@@ -424,10 +427,11 @@ keyboard.addEventListener("click", (event) => {
   document.querySelectorAll(".key").forEach((element) => {
     element.classList.remove("active");
   });
-
-  document
-    .querySelector(`[data-code=${keyCl.dataset.code}]`)
-    .classList.add("active");
+  requestAnimationFrame(() =>
+    document
+      .querySelector(`[data-code=${keyCl.dataset.code}]`)
+      .classList.add("active")
+  );
   addTextarea(keyCl.dataset);
 });
 
@@ -465,11 +469,13 @@ function addTextarea(event) {
     } else {
       ln = "en";
     }
+
     document
       .querySelectorAll(".key")
       .forEach(
         (element) => (element.textContent = objKeys[element.dataset.code][ln])
       );
+
     setLocalStorage();
   } else if (event.code == "Enter") {
     if (end == endStr) {
@@ -482,29 +488,24 @@ function addTextarea(event) {
     screen.setSelectionRange(end + 1, end + 1);
   } else if (event.code == "ShiftLeft") {
     if (isShift == false) {
-      document
-        .querySelectorAll(".key")
-        .forEach((element) => {
-          if (letters.includes(element.dataset.code)) {
-            element.textContent = element.textContent.toUpperCase()
-          } else if (digits.includes(element.dataset.code)) {
-            element.textContent = objKeys[element.dataset.code]['pm'];
-          }
-        });
+      document.querySelectorAll(".key").forEach((element) => {
+        if (letters.includes(element.dataset.code)) {
+          element.textContent = element.textContent.toUpperCase();
+        } else if (digits.includes(element.dataset.code)) {
+          element.textContent = objKeys[element.dataset.code]["pm"];
+        }
+      });
       isShift = true;
     } else {
-      document
-        .querySelectorAll(".key")
-        .forEach((element) => {
-          if (letters.includes(element.dataset.code)) {
-            element.textContent = element.textContent.toLowerCase()
-          } else if (digits.includes(element.dataset.code)) {
-            element.textContent = objKeys[element.dataset.code][ln];
-          }
-        });
+      document.querySelectorAll(".key").forEach((element) => {
+        if (letters.includes(element.dataset.code)) {
+          element.textContent = element.textContent.toLowerCase();
+        } else if (digits.includes(element.dataset.code)) {
+          element.textContent = objKeys[element.dataset.code][ln];
+        }
+      });
       isShift = false;
     }
-
   } else if (event.code == "NumpadDecimal") {
     if (start == end) {
       screen.value =
@@ -523,27 +524,31 @@ function addTextarea(event) {
     screen.setSelectionRange(end + 1, end + 1);
   } else if (event.code == "CapsLock") {
     if (isCapsLock == false) {
-      document.querySelector("[data-code=CapsLock]").classList.add("key_pressed");
+      document
+        .querySelector("[data-code=CapsLock]")
+        .classList.add("key_pressed");
       document
         .querySelectorAll(".key")
         .forEach((element) =>
-          letters.includes(element.dataset.code) ?
-          (element.textContent = element.textContent.toUpperCase()) :
-          (element.textContent = element.textContent)
+          letters.includes(element.dataset.code)
+            ? (element.textContent = element.textContent.toUpperCase())
+            : (element.textContent = element.textContent)
         );
       isCapsLock = true;
     } else {
-      document.querySelector("[data-code=CapsLock]").classList.remove("key_pressed");
+      document
+        .querySelector("[data-code=CapsLock]")
+        .classList.remove("key_pressed");
       document
         .querySelectorAll(".key")
         .forEach((element) =>
-          letters.includes(element.dataset.code) ?
-          (element.textContent = element.textContent.toLowerCase()) :
-          (element.textContent = element.textContent)
+          letters.includes(element.dataset.code)
+            ? (element.textContent = element.textContent.toLowerCase())
+            : (element.textContent = element.textContent)
         );
       isCapsLock = false;
     }
-  } else {
+  } else if (event.code !== "AltLeft") {
     screen.value += document.querySelector(
       `[data-code=${event.code}]`
     ).textContent;
