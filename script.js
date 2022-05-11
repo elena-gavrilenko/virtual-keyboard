@@ -70,54 +70,67 @@ let objKeys = {
   Backquote: {
     ru: "ё",
     en: "`",
+    pm: "~",
   },
   Digit1: {
     ru: "1",
     en: "1",
+    pm: "!",
   },
   Digit2: {
     ru: "2",
     en: "2",
+    pm: "@",
   },
   Digit3: {
     ru: "3",
     en: "3",
+    pm: "#",
   },
   Digit4: {
     ru: "4",
     en: "4",
+    pm: "$",
   },
   Digit5: {
     ru: "5",
     en: "5",
+    pm: "%",
   },
   Digit6: {
     ru: "6",
     en: "6",
+    pm: "^",
   },
   Digit7: {
     ru: "7",
     en: "7",
+    pm: "&",
   },
   Digit8: {
     ru: "8",
     en: "8",
+    pm: "*",
   },
   Digit9: {
     ru: "9",
     en: "9",
+    pm: "(",
   },
   Digit0: {
     ru: "0",
     en: "0",
+    pm: ")",
   },
   Minus: {
     ru: "-",
     en: "-",
+    pm: "_",
   },
   Equal: {
     ru: "=",
     en: "=",
+    pm: "+",
   },
   Backspace: {
     ru: "Backspace",
@@ -358,12 +371,15 @@ const langKey = "ln";
 function getLocalStorage() {
   if (localStorage.getItem(langKey)) {
     ln = localStorage.getItem(langKey);
-  } else ln = "en";
+  } else {
+    ln = "en"
+  }
 }
 
 getLocalStorage();
 
 let isCapsLock = false;
+let isShift = false;
 
 function addKey() {
   let board = [];
@@ -404,7 +420,6 @@ document.addEventListener("keydown", (event) => {
 });
 keyboard.addEventListener("click", (event) => {
   let keyCl = event.target.closest(".key");
-  console.log(keyCl);
   if (!keyCl) return;
   document.querySelectorAll(".key").forEach((element) => {
     element.classList.remove("active");
@@ -421,9 +436,10 @@ function setLocalStorage() {
 }
 
 function addTextarea(event) {
+  let start = screen.selectionStart;
+  let end = screen.selectionEnd;
+  let endStr = screen.value.length;
   if (event.code == "Backspace") {
-    let start = screen.selectionStart;
-    let end = screen.selectionEnd;
     if (start == end) {
       screen.value =
         screen.value.slice(0, start - 1) +
@@ -433,15 +449,17 @@ function addTextarea(event) {
       screen.value.slice(0, start) +
       screen.value.slice(end, screen.value.length);
     screen.setSelectionRange(start, end - 1);
+  } else if (event.code == "Space") {
+    screen.value = screen.value.slice(0, end);
   } else if (
     event.code == "ControlLeft" ||
     event.code == "ControlRight" ||
+    event.code == "ShiftRight" ||
+    event.code == "MetaLeft" ||
     event.code == "AltRight"
   ) {
     screen.value = screen.value.slice(0, end);
   } else if (event.altKey && event.ctrlKey) {
-    let start = screen.selectionStart;
-    let end = screen.selectionEnd;
     if (ln == "en") {
       ln = "ru";
     } else {
@@ -454,10 +472,6 @@ function addTextarea(event) {
       );
     setLocalStorage();
   } else if (event.code == "Enter") {
-    let start = screen.selectionStart;
-    let end = screen.selectionEnd;
-    let endStr = screen.value.length;
-    console.log(start);
     if (end == endStr) {
       screen.value =
         screen.value.slice(0, start) + "\n" + screen.value.slice(start);
@@ -465,9 +479,33 @@ function addTextarea(event) {
       screen.value =
         screen.value.slice(0, start) + "\n" + screen.value.slice(end);
     }
+    screen.setSelectionRange(end + 1, end + 1);
+  } else if (event.code == "ShiftLeft") {
+    if (isShift == false) {
+      document
+        .querySelectorAll(".key")
+        .forEach((element) => {
+          if (letters.includes(element.dataset.code)) {
+            element.textContent = element.textContent.toUpperCase()
+          } else if (digits.includes(element.dataset.code)) {
+            element.textContent = objKeys[element.dataset.code]['pm'];
+          }
+        });
+      isShift = true;
+    } else {
+      document
+        .querySelectorAll(".key")
+        .forEach((element) => {
+          if (letters.includes(element.dataset.code)) {
+            element.textContent = element.textContent.toLowerCase()
+          } else if (digits.includes(element.dataset.code)) {
+            element.textContent = objKeys[element.dataset.code][ln];
+          }
+        });
+      isShift = false;
+    }
+
   } else if (event.code == "NumpadDecimal") {
-    let start = screen.selectionStart;
-    let end = screen.selectionEnd;
     if (start == end) {
       screen.value =
         screen.value.slice(0, start) +
@@ -478,30 +516,30 @@ function addTextarea(event) {
       screen.value.slice(end, screen.value.length);
     screen.setSelectionRange(start, end);
   } else if (event.code == "Tab") {
-    let start = screen.selectionStart;
-    let end = screen.selectionEnd;
     screen.value =
       screen.value.slice(0, start) +
-      "  " +
+      "\t" +
       screen.value.slice(end, screen.value.length);
-    screen.setSelectionRange(end + 3);
+    screen.setSelectionRange(end + 1, end + 1);
   } else if (event.code == "CapsLock") {
     if (isCapsLock == false) {
+      document.querySelector("[data-code=CapsLock]").classList.add("key_pressed");
       document
         .querySelectorAll(".key")
         .forEach((element) =>
-          letters.includes(element.dataset.code)
-            ? (element.textContent = element.textContent.toUpperCase())
-            : (element.textContent = element.textContent)
+          letters.includes(element.dataset.code) ?
+          (element.textContent = element.textContent.toUpperCase()) :
+          (element.textContent = element.textContent)
         );
       isCapsLock = true;
     } else {
+      document.querySelector("[data-code=CapsLock]").classList.remove("key_pressed");
       document
         .querySelectorAll(".key")
         .forEach((element) =>
-          letters.includes(element.dataset.code)
-            ? (element.textContent = element.textContent.toLowerCase())
-            : (element.textContent = element.textContent)
+          letters.includes(element.dataset.code) ?
+          (element.textContent = element.textContent.toLowerCase()) :
+          (element.textContent = element.textContent)
         );
       isCapsLock = false;
     }
