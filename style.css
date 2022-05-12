@@ -1,0 +1,155 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  padding: 5px;
+}
+
+.title {
+  margin: 0 auto;
+  font-size: 45px;
+  color: rgb(144, 31, 201);
+  text-shadow: 2px 0 2px#474448;
+}
+
+.screen {
+  width: 950px;
+  height: 200px;
+  font-size: 20px;
+  color: black;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 0 auto;
+}
+
+.keyboard {
+  width: 950px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid black;
+  border-radius: 20px 20px 70px 70px;
+  padding: 5px;
+  background-color: rgb(187, 184, 187);
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.key {
+  width: 50px;
+  height: 50px;
+  padding: 3px;
+  margin: 4px;
+  text-align: center;
+  font-size: 23px;
+  padding-top: 10px;
+  position: relative;
+  outline: none;
+  border: 2px solid #870ba0;
+  border-radius: 5px;
+  box-shadow: 0 0 0 60px rgba(0, 0, 0, 0) inset, .1em .1em .2em #620574;
+  background: linear-gradient(45deg, #8b15fa, #a13efc, #b569fc, #c891fc, #b569fc, #a13efc, #8b15fa);
+}
+
+@keyframes back {
+  from {
+    background: #eaf1f1;
+    border-radius: 50%;
+  }
+
+}
+
+.active {
+  animation-duration: 0.7s;
+  animation-name: back;
+}
+
+.key:hover {
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.key_pressed {
+  position: relative;
+}
+
+.key_pressed::before {
+  content: " ";
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+  background-color: #a13efc;
+  border: 1px solid #8b15fa;
+  border-radius: 5px;
+  z-index: 3;
+}
+
+div[data-code=Backspace],
+div[data-code=Enter],
+div[data-code=CapsLock],
+div[data-code=ShiftLeft],
+div[data-code=ShiftRight] {
+  width: 105px;
+  text-shadow: black 1px 1px 0,
+    black -1px 1px 0,
+    black -1px -1px 0,
+    black 1px -1px 0;
+  color: white;
+  outline: none;
+  border: 2px solid #292828;
+  border-radius: 5px;
+  box-shadow: 0 0 0 60px rgba(0, 0, 0, 0) inset, .1em .1em .2em #171717;
+  background: linear-gradient(45deg, #171717, #606060, #a1a0a0, #606060, #171717);
+}
+
+div[data-code=NumpadDecimal],
+div[data-code=Tab],
+div[data-code=MetaLeft],
+div[data-code=AltLeft],
+div[data-code=AltRight],
+div[data-code=ControlLeft],
+div[data-code=ControlRight],
+div[data-code=ArrowLeft],
+div[data-code=ArrowDown],
+div[data-code=ArrowRight],
+div[data-code=ArrowUp] {
+  text-shadow: black 1px 1px 0,
+    black -1px 1px 0,
+    black -1px -1px 0,
+    black 1px -1px 0;
+  color: white;
+  outline: none;
+  border: 2px solid #292828;
+  border-radius: 5px;
+  box-shadow: 0 0 0 60px rgba(0, 0, 0, 0) inset, .1em .1em .2em #171717;
+  background: linear-gradient(45deg, #171717, #606060, #a1a0a0, #606060, #171717);
+
+}
+
+div[data-code=Space] {
+  width: 396px;
+}
+
+.subtitle {
+  width: 610px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 5px;
+}
