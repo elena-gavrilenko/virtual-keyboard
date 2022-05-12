@@ -454,7 +454,22 @@ function addTextarea(event) {
       screen.value.slice(end, screen.value.length);
     screen.setSelectionRange(start, end - 1);
   } else if (event.code == "Space") {
-    screen.value = screen.value.slice(0, end);
+    if (start == end) {
+      console.log(start == end);
+      screen.value =
+        screen.value.slice(0, start) +
+        " " +
+        screen.value.slice(end, screen.value.length);
+      screen.setSelectionRange(end + 1, end + 1);
+    } else {
+      console.log(start);
+      console.log(end);
+      screen.value =
+        screen.value.slice(0, start) +
+        " " +
+        screen.value.slice(end, screen.value.length);
+      screen.setSelectionRange(start + 1, start + 1);
+    }
   } else if (
     event.code == "ControlLeft" ||
     event.code == "ControlRight" ||
@@ -549,9 +564,11 @@ function addTextarea(event) {
       isCapsLock = false;
     }
   } else if (event.code !== "AltLeft") {
-    screen.value += document.querySelector(
-      `[data-code=${event.code}]`
-    ).textContent;
+    screen.value =
+      screen.value.slice(0, start) +
+      document.querySelector(`[data-code=${event.code}]`).textContent +
+      screen.value.slice(end, screen.value.length);
+    screen.setSelectionRange(end + 1, end + 1);
   }
   screen.focus();
 }
